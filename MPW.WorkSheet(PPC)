@@ -1,0 +1,92 @@
+# INSTRUCTIONS FOR BUILDING THE Compress-LZF SHARED LIBRARY
+	
+
+
+# (1) Copy the Compress-LZF-0.05 folder from the expanded Compress-LZF-0.05 archive into the 
+#     :MacPerl_Src:perl:ext folder of the MacPerl source distribution.
+#  
+#     and then
+#
+#     Set the current directory to the Compress-LZF-0.05 folder.
+
+
+
+# (2a) Set the MPW variable 'MPSrc' to the path to your MacPerl_Src folder, for example     
+
+Set MPSrc "MacintoshHD:MacPerl_Src"     # (change the path accordingly)
+
+
+
+
+
+# (3) Run the XSUBpp compiler for LZF.xs 
+
+perl :::lib:ExtUtils:xsubpp -typemap :::lib:ExtUtils:typemap  LZF.xs >LZF.tc && Rename -y LZF.tc LZF.c
+
+
+
+
+
+# (4) If you like, take a look at the resulting C source file LZF.c
+
+open LZF.c
+
+
+
+# (5) Compile LZF.c (with symbol export for shared lib):
+
+
+MrC  -inclpath ignoresys -sym off  -d __STD_C -d MULTIPLICITY -w off -opt speed -t -fatext  ¶
+-i {MPSrc}:sfio:include: ¶
+-i {MPSrc}:GUSI:include: ¶
+-i {MPSrc}:perl: ¶
+-i : -shared_lib_export on ¶
+-export_list "LZF".exp "LZF".c
+
+
+
+
+
+
+# (6) Open the file which contains a list of the shared library's exported entry points (symbols).
+#     Delete every line except the last, which is:
+#      
+#	  boot_Compress__LZF
+#
+#     Be sure to save your changes.
+
+open LZF.exp
+
+
+
+
+
+# (7) Link LZF.o as shared lib
+
+
+PPCLink -w -xm sharedlibrary -sym on -@export LZF.exp LZF.c.PPC.o ¶
+{MPSrc}:perl:PerlStub ¶
+{SharedLibraries}InterfaceLib ¶
+{SharedLibraries}StdCLib ¶
+{SharedLibraries}MathLib ¶
+{PPCLibraries}PPCCRuntime.o ¶
+-c cfmg -fragname "LZF" -o LZF.shlb.PPC
+
+
+
+	
+
+# (8) Rename the shared library 'LZF.PPC' to 'LZF'
+
+
+Rename -y LZF.shlb.PPC LZF
+
+
+
+
+
+#  Done. The shared library 'LZF' must be installed in the ':site_perl:MacPPC:auto:Compress:LZF' folder.
+
+
+
+

@@ -1,0 +1,116 @@
+# INSTRUCTIONS FOR BUILDING THE Compress::LZF CFM68K SHARED LIBRARY
+	
+
+
+# (1) Copy the Compress-LZF-0.05 folder from the expanded Compress-LZF-0.05.tar.gz archive into the 
+#     :MacPerl_Src:perl:ext folder of the MacPerl source distribution.
+#  
+#     and then
+#
+#     Set the current directory to the Compress-LZF-0.05 folder (via Directory menu).
+
+
+
+
+# (2) Set the MPW variable 'MPSrc' to the path to your MacPerl_Src folder, for example     
+
+Set MPSrc "MacintoshHD:MacPerl_Src"     # (change the path accordingly)
+
+
+
+
+
+# (3) Run the XSUBpp compiler for LZF_68K.xs
+
+perl :::lib:ExtUtils:xsubpp -typemap :::lib:ExtUtils:typemap  LZF_68K.xs >LZF.tc && Rename -y LZF.tc LZF.c
+
+
+
+
+
+# (4) If you like, take a look at the resulting C source file LZF.c
+
+open LZF.c
+
+
+
+
+# (5) Compile LZF.c (with support for shared library model):
+
+
+SC -w off -d __STD_C -d MULTIPLICITY ¶
+	-model cfmflat ¶
+	-i {MPSrc}: ¶
+	-i {MPSrc}:sfio:include: ¶
+	-i {MPSrc}:GUSI:include: ¶
+	-i {MPSrc}:perl: ¶
+	-i : ¶
+    -o LZF.c.o LZF.c
+
+
+
+
+# (6) Link LZF.c.o as shared lib. 
+
+
+ILink ¶
+	":LZF.c.o" ¶
+	"{CFM68KLibraries}NuMathLib.o" ¶
+	"{SharedLibraries}StdCLib" ¶
+	"{SharedLibraries}InterfaceLib" ¶
+	"{CFM68KLibraries}NuMacRuntime.o" ¶
+	"{CFM68KLibraries}NuToolLibs.o" ¶
+	{MPSrc}:perl:PerlStub ¶
+	-sym off ¶
+	-mf -d ¶
+	-model cfmflat ¶
+	-xm sharedlibrary ¶
+	-fragname LZF ¶
+	-export boot_Compress__LZF ¶
+	-state rewrite ¶
+	-compact -pad 0 ¶
+	-o LZF.shlb.CFM68K
+
+
+
+
+
+# (7) Rename shared lib temporary
+
+Rename -y LZF.shlb.CFM68K LZF.shlb.CFM68K.tmp
+
+
+
+
+# (8) Flatten the segmented shared library created by ILink
+
+MakeFlat LZF.shlb.CFM68K.tmp -o LZF.shlb.CFM68K
+ 
+
+
+
+# (9) Set the file type and creator of LZF.shlb.CFM68K 
+
+SetFile -t 'shlb' -c 'cfmg' LZF.shlb.CFM68K
+
+
+
+
+
+# (10) Delete the temporary file
+
+Delete -y LZF.shlb.CFM68K.tmp
+
+
+
+
+# (11) Rename the shared library 'LZF.shlb.CFM68K' to 'LZF'
+
+Rename -y LZF.shlb.CFM68K LZF
+
+
+
+
+
+#  Done. The shared library 'LZF' must be installed in the ':site_perl:MacCFM68K:auto:Compress:LZF' folder.
+

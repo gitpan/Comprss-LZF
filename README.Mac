@@ -1,0 +1,132 @@
+Saturday, February 11, 2001
+
+Dear MacPerl Users,
+
+this is the Compress-LZF-0.05 module with shared libraries compiled for MacPerl. Shared 
+libraries run only on PPC and CFM68K versions of MacPerl, not non-CFM 68K versions.
+
+This was compiled with MPW's MrC (PPC) and SC (68K). Passed all tests on both
+architectures (thanks to my old Mac LC :). However, let me know of any problems you
+might encounter.
+
+You can download the module and the readme from my website via
+
+    http://usemacperl.webjump.com/index.html
+
+or from my CPAN directory
+
+    $CPAN/authors/id/T/TW/TWEGNER/
+
+
+INSTALLATION
+============
+The module is best installed using Chris Nandor's installme.plx droplet. Simply 
+drop the packed archive or the unpacked folder on the droplet. Answer the 
+upcoming question "Convert all text and MacBinary files?" with "Yes". This should 
+install the module properly. 
+
+The installer is part of the cpan-mac module, available from CPAN 
+
+    http://www.perl.com/CPAN-local/authors/id/CNANDOR/
+
+or via Chris Nandor's MacPerl page 
+
+    http://pudge.net/macperl/ .
+	
+
+CHANGES
+=======
+In the 'Mac_changed' folder, you will find a back-up of all the *ORIGINAL* files, 
+that have been changed:
+
+LZF.xs
+MANIFEST
+README
+
+Actually, the only source file I've changed is 'LZF.xs'. All the changes I've made 
+can be found by searching for the phrase '###TOM', if you are interested in.
+
+I've added two MPW worksheets (PPC and 68K) to the distribution. This way you can
+build the module yourself, if you like. However, you will need the MacPerl source 
+distribution [1] and the FREE MPW development environment, available from Apple [2]. 
+You may also want to take a look at the Macintosh Perl XS Tutorial [3]. It's best 
+to open the worksheet and execute the commands step by step. Read and follow the 
+instructions I've provided for each step of the build process.
+
+In the build process for CFM68K some extra preparation is required for the source 
+file(s). To help you in this procedure, I've added the file 'LZF_68K.xs'. This 
+should be the input file for the XSUBpp compiler in the CFM68K build process.
+
+In that 68K XS file, the header declarations are bracketed with #import pragmas.
+This special pragma treatment is needed for the SC compiler and the ILink linker  
+(see the Macintosh Perl XS tutorial for details). Follow the steps in the 68K MPW
+worksheet and everything should be fine.
+
+Have fun.
+
+--
+Thomas Wegner
+
+toms_email@gmx.de
+
+
+References:
+
+[1] MacPerl 5.004 source  <ftp://sunsite.cnlab-switch.ch/software/platform/macos/perl/Mac_Perl_520r4_src.bin>
+[2] Apple's MPW  <http://developer.apple.com/tools/mpw-tools/>
+[3] Macintosh Perl XS Tutorial  <http://macperl.com/depts/Tutorials/XS/Mac_XS.sea.hqx>
+
+
+
+
+############################ ORIGINAL FOLLOWS ####################################################################
+
+
+NAME
+    Compress::LZF - extremely leight-weight Lev-Zimpel-Free compression
+
+SYNOPSIS
+       use Compress::LZF;
+
+       $compressed = compress $uncompressed_data;
+
+       $original_data = decompress $compressed;
+
+DESCRIPTION
+    LZF is an extremely fast (not that much slower than a pure memcpy)
+    compression algorithm. It is ideal for applications where you want to
+    save *some* space but not at the cost of speed. It is ideal for
+    repetitive data as well. The module is self-contained and very small (no
+    large library to be pulled in). It is also free, so there should be no
+    problems incoporating this module into commercial programs.
+
+    I have no idea wether any patents in any countries apply to this
+    algorithm, but at the moment it is believed that it is free from any
+    patents.
+
+FUNCTIONS
+  $compressed = compress $uncompressed
+
+    Try to compress the given string as quickly and as much as possible. In
+    the worst case, the string can enlarge by 1 byte, but that should be the
+    absolute exception. You can expect a 45% compression ratio on large,
+    binary strings.
+
+  $decompressed = decompress $compressed
+
+    Uncompress the string (compressed by "compress") and return the original
+    data. Decompression errors can result in either broken data (there is no
+    checksum kept) or a runtime error.
+
+SEE ALSO
+    Other Compress::* modules, especially Compress::LZV1 (an older, less
+    speedy module that guarentees only 1 byte overhead worst case) and
+    Compress::Zlib.
+
+    http://liblzf.plan9.de/
+
+AUTHOR
+    This perl extension and the underlying liblzf were written by Marc
+    Lehmann <pcg@goof.com> (See also http://liblzf.plan9.de/).
+
+BUGS

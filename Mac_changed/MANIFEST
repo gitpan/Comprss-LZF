@@ -1,0 +1,14 @@
+README
+Changes
+MANIFEST
+COPYING
+COPYING.Artistic
+COPYING.GNU
+Makefile.PL
+t/00_load.t
+t/01_run.t
+LZF.pm
+LZF.xs
+lzfP.h
+lzf_c.c
+lzf_d.c
